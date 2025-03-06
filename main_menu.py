@@ -42,15 +42,19 @@ class Menu():
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 pg.quit()
+                return False
             elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
                 if self.button2.collidepoint(event.pos):
                     self.action = 'exit_game'
                     pg.quit()
                     exit()
+                    return False
                 elif self.button1.collidepoint(event.pos):
                     self.action = 'start_game'
+                    return False
+        return True
     def run(self):
         running = True
         while running:
+            running = self.handle_events()
             self.draw()
-            self.handle_events()

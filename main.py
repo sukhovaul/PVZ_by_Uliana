@@ -1,7 +1,6 @@
 import pygame as pg
 import pytmx
 from settings import *
-import resource_manager
 import main_menu
 
 pg.init()
@@ -27,11 +26,11 @@ class Game():
 
         self.run()
     def run(self):
-        while True:
+        running = True
+        while running:
             self.event()
             self.update()
             self.draw()
-            self.main_menu.handle_events()
     def event(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -45,7 +44,7 @@ class Game():
         self.screen.fill('black')
 
         if self.map == 'main_menu':
-            self.main_menu.draw()
+            self.main_menu.run()
 
         if self.map == 'level1':
             for layer in self.tmx_map:
