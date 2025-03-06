@@ -1,5 +1,6 @@
 import pygame as pg
 import pytmx
+from settings import*
 
 class ResourceManager:
     def __init__(self):
