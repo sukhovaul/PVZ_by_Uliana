@@ -2,6 +2,7 @@ import pygame as pg
 import pytmx
 from settings import *
 import main_menu
+import suns
 
 pg.init()
 
@@ -13,6 +14,7 @@ class Game():
         self.tmx_map = pytmx.load_pygame('maps/level1.tmx')
         self.cells = []
         self.map = 'main_menu'
+        self.sun = suns.Sun(self.screen)
 
         self.main_menu = main_menu.Menu(SCREEN_WIDTH, SCREEN_HEIGHT,'maps/MainMenu.png')
 
@@ -36,6 +38,8 @@ class Game():
             if event.type == pg.QUIT:
                 pg.quit()
                 exit()
+            elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1 and self.map == 'level1':
+                self.sun.check_click(event.pos)
         if self.main_menu.action == 'start_game':
             self.map = 'level1'
     def update(self):
@@ -54,6 +58,7 @@ class Game():
 
                         if tile:
                             self.screen.blit(tile, (x*self.tmx_map.tilewidth, y*self.tmx_map.tileheight))
+            self.sun.draw()
 
         pg.display.flip()
 
