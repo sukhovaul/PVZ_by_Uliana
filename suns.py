@@ -20,7 +20,6 @@ class Sun():
         if time.time() - self.last_spawn_time >= 10:
             self.last_spawn_time = time.time()
             self.suns.append(self.create_sun())
-            print(self.suns)
 
         for sun in self.suns:
             if not sun["collected"]:
@@ -33,7 +32,6 @@ class Sun():
             if not sun["collected"] and sun["rect"].collidepoint(pos):
                 sun["collected"] = True
                 self.suns_total += 25
-                print(f"Собрано солнц: {self.suns_total}")
 
         self.suns = [sun for sun in self.suns if not sun["collected"]]
 

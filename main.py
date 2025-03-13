@@ -3,6 +3,7 @@ import pytmx
 from settings import *
 import main_menu
 import suns
+import cells
 
 pg.init()
 
@@ -12,24 +13,25 @@ class Game():
         pg.display.set_caption('Plants vs Zombies')
 
         self.tmx_map = pytmx.load_pygame('maps/level1.tmx')
-        self.cells = []
         self.map = 'main_menu'
         self.sun = suns.Sun(self.screen)
 
+        self.cells = cells.Cells(self.tmx_map)
+
         self.main_menu = main_menu.Menu(SCREEN_WIDTH, SCREEN_HEIGHT,'maps/MainMenu.png')
 
-        for layer in self.tmx_map:
-            if isinstance(layer, pytmx.TiledObjectGroup):
-                if layer.name == 'cells':
-                    for obj in layer:
-                        new_cell = pg.Rect(obj.x, obj.y, obj.width, obj.height)
-                        self.cells.append(new_cell)
-        print(self.cells)
+        self.clock = pg.time.Clock() #добавляем объект clock для регулирования fps
+
+        self.suns_count = pg.image.load('pictures/suns_count.png')
+        self.suns_count_rect = pg.Surface((54, 21))
+        self.suns_count_rect.fill((227,203,170))
+        self.amount_font = pg.font.Font('fonts/main_font.ttf',20)
 
         self.run()
     def run(self):
         running = True
         while running:
+            self.clock.tick(60) #устанавливаем 60 fps
             self.event()
             self.update()
             self.draw()
@@ -40,6 +42,7 @@ class Game():
                 exit()
             elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1 and self.map == 'level1':
                 self.sun.check_click(event.pos)
+                self.cells.fill_cell(event.pos)
         if self.main_menu.action == 'start_game':
             self.map = 'level1'
     def update(self):
@@ -59,6 +62,10 @@ class Game():
                         if tile:
                             self.screen.blit(tile, (x*self.tmx_map.tilewidth, y*self.tmx_map.tileheight))
             self.sun.draw()
+            self.screen.blit(self.suns_count,(0,0))
+            self.screen.blit(self.suns_count_rect,(10,61))
+            self.amount = self.amount_font.render(str(self.sun.suns_total),True,(30,30,30))
+            self.screen.blit(self.amount,(32,60))
 
         pg.display.flip()
 
