@@ -4,6 +4,7 @@ from settings import *
 import main_menu
 import suns
 import cells
+import plants
 
 pg.init()
 
@@ -27,6 +28,8 @@ class Game():
         self.suns_count_rect.fill((227,203,170))
         self.amount_font = pg.font.Font('fonts/main_font.ttf',20)
 
+        self.plants = plants.Plants(self.screen)
+
         self.run()
     def run(self):
         running = True
@@ -43,6 +46,7 @@ class Game():
             elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1 and self.map == 'level1':
                 self.sun.check_click(event.pos)
                 self.cells.fill_cell(event.pos)
+                self.plants.choose_plant(event.pos)
         if self.main_menu.action == 'start_game':
             self.map = 'level1'
     def update(self):
@@ -66,6 +70,8 @@ class Game():
             self.screen.blit(self.suns_count_rect,(10,61))
             self.amount = self.amount_font.render(str(self.sun.suns_total),True,(30,30,30))
             self.screen.blit(self.amount,(32,60))
+
+            self.plants.draw_cards(self.sun.suns_total)
 
         pg.display.flip()
 
