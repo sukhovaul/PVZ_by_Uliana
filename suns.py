@@ -17,7 +17,7 @@ class Sun():
         self.suns.append(self.create_sun())
 
     def draw(self):
-        if time.time() - self.last_spawn_time >= 10:
+        if time.time() - self.last_spawn_time >= 5:
             self.last_spawn_time = time.time()
             self.suns.append(self.create_sun())
 
