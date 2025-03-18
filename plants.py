@@ -24,6 +24,7 @@ class Plants():
 
         self.active_plant = None
         self.active_time = None
+        self.plant_amount = 0
 
     def draw_cards(self, suns_amount):
         self.screen.blit(self.gray_sunflower, (74, 5))
@@ -42,4 +43,5 @@ class Plants():
         for card in self.cards:
             if card["rect"].collidepoint(pos) and card["availible"]:
                 self.active_plant = card["plant"]
+                self.plant_amount = card["amount"]
                 print(self.active_plant)
