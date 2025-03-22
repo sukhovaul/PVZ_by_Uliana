@@ -16,6 +16,10 @@ class Sun():
 
         self.suns.append(self.create_sun())
 
+        pg.mixer.init()
+
+        self.sun_collected = pg.mixer.Sound('music/achievement.mp3')
+
     def draw(self):
         if time.time() - self.last_spawn_time >= 5:
             self.last_spawn_time = time.time()
@@ -32,6 +36,7 @@ class Sun():
             if not sun["collected"] and sun["rect"].collidepoint(pos):
                 sun["collected"] = True
                 self.suns_total += 25
+                self.sun_collected.play()
 
         self.suns = [sun for sun in self.suns if not sun["collected"]]
 

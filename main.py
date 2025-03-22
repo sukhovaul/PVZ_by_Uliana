@@ -7,6 +7,7 @@ import cells
 import plants
 
 pg.init()
+pg.mixer.init()
 
 class Game():
     def __init__(self):
