@@ -17,7 +17,7 @@ class Game():
         self.map = 'main_menu'
         self.sun = suns.Sun(self.screen)
 
-        self.cells = cells.Cells(self.tmx_map)
+        self.cells = cells.Cells(self.tmx_map, self.screen)
 
         self.main_menu = main_menu.Menu(SCREEN_WIDTH, SCREEN_HEIGHT,'maps/MainMenu.png')
 
