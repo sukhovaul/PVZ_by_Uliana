@@ -46,7 +46,7 @@ class Game():
                 exit()
             elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1 and self.map == 'level1':
                 self.sun.check_click(event.pos)
-                self.cells.fill_cell(event.pos, self.plants.active_plant, self.sun.suns_total, self.plants.plant_amount)
+                self.cells.fill_cell(event.pos, self.plants.active_plant,  self.plants.plant_amount, self.sun)
                 self.plants.choose_plant(event.pos)
         if self.main_menu.action == 'start_game':
             self.map = 'level1'

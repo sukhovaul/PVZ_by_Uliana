@@ -16,15 +16,18 @@ class Cells():
         print(self.cells)
 
         self.sunflower_picture = pg.image.load('pictures/plants/SunFlower.png')
-    def fill_cell(self, pos, active_plant, suns_amount, plant_amount):
-        self.suns_amount = suns_amount
+    def fill_cell(self, pos, active_plant, plant_amount, sun_object):
         for cell in self.cells:
             if cell["rect"].collidepoint(pos) and active_plant:
                 if cell["empty"]:
-                    cell["empty"]=False
-                    self.suns_amount-=plant_amount
-                    print(self.suns_amount)
-                    if active_plant == 'sunflower':
-                        self.screen.blit(self.sunflower_picture,(cell["rect"].x, cell["rect"].y))
+
+                    if sun_object.suns_total >= plant_amount:
+                        cell["empty"] = False
+                        sun_object.suns_total -= plant_amount
+                        print(sun_object.suns_total)
+                        if active_plant == 'sunflower':
+                            self.screen.blit(self.sunflower_picture,(cell["rect"].x, cell["rect"].y))
+                    else:
+                        print('Недостаточно солнц для покупки растения')
                 else:
                     print('Клетка уже занята')
