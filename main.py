@@ -5,6 +5,7 @@ import main_menu
 import suns
 import cells
 import plants
+import zombies
 
 pg.init()
 pg.mixer.init()
@@ -30,6 +31,8 @@ class Game():
         self.amount_font = pg.font.Font('fonts/main_font.ttf',20)
 
         self.plants = plants.Plants(self.screen)
+        self.zombies_1 = zombies.Zombies(1)
+        self.zombies_1.create_zombies()
 
         self.run()
     def run(self):
