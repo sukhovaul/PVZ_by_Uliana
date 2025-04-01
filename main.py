@@ -31,14 +31,16 @@ class Game():
         self.amount_font = pg.font.Font('fonts/main_font.ttf',20)
 
         self.plants = plants.Plants(self.screen)
-        self.zombies_1 = zombies.Zombies(1)
+        self.zombies_1 = zombies.Zombies(1, self.screen)
         self.zombies_1.create_zombies()
 
         self.run()
     def run(self):
         running = True
+        self.time = 0
         while running:
             self.clock.tick(60) #устанавливаем 60 fps
+            self.time+=1
             self.event()
             self.update()
             self.draw()
@@ -53,6 +55,7 @@ class Game():
                 self.plants.choose_plant(event.pos)
         if self.main_menu.action == 'start_game':
             self.map = 'level1'
+        self.zombies_1.move()
     def update(self):
         ...
     def draw(self):
@@ -78,6 +81,7 @@ class Game():
             self.plants.draw_cards(self.sun.suns_total)
 
             self.cells.draw_plants()
+            self.zombies_1.draw_zombies()
 
         pg.display.flip()
 
