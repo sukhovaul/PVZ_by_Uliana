@@ -28,13 +28,13 @@ class Cells():
                         cell["empty"] = False
                         sun_object.suns_total -= plant_amount
                         if plant.active_plant == 'sunflower':
-                            self.plants.append({"image":self.sunflower_picture,"x":cell["rect"].x, "y":cell["rect"].y})
+                            self.plants.append({"image":self.sunflower_picture,"x":cell["rect"].x, "y":cell["rect"].y, "rect": cell["rect"], "points": 20})
                             plant.active_plant = None
                         elif plant.active_plant == 'wallnut':
-                            self.plants.append({"image": self.wallnut_picture, "x":cell["rect"].x, "y":cell["rect"].y})
+                            self.plants.append({"image": self.wallnut_picture, "x":cell["rect"].x, "y":cell["rect"].y, "rect": cell["rect"], "points": 50})
                             plant.active_plant = None
                         elif plant.active_plant:
-                            self.plants.append({"image": self.peashooter_picture, "x": cell["rect"].x, "y": cell["rect"].y})
+                            self.plants.append({"image": self.peashooter_picture, "x": cell["rect"].x, "y": cell["rect"].y, "rect": cell["rect"]})
                             plant.active_plant = None
                     else:
                         print('Недостаточно солнц для покупки растения')

@@ -56,6 +56,7 @@ class Game():
         if self.main_menu.action == 'start_game':
             self.map = 'level1'
         self.zombies_1.move()
+        self.zombies_1.hit_plant(self.cells)
     def update(self):
         ...
     def draw(self):
