@@ -82,7 +82,7 @@ class Game():
             self.plants.draw_cards(self.sun.suns_total)
 
             self.cells.draw_plants()
-            self.zombies_1.draw_zombies()
+            self.zombies_1.draw_zombies(self.cells)
 
         pg.display.flip()
 

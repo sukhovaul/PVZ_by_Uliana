@@ -1,5 +1,6 @@
 import pygame as pg
 import pytmx
+import time
 
 class Cells():
     def __init__(self, tmx_map, screen):
@@ -8,17 +9,19 @@ class Cells():
         self.screen = screen
         self.plants = []
 
+        self.plant_time = time.time()
+
+        self.sunflower_pictures = [pg.image.load(f'pictures/plants/sunflower/SunFlower_{i}.png') for i in range(18)]
+
         for layer in self.tmx_map:
             if isinstance(layer, pytmx.TiledObjectGroup):
                 if layer.name == 'cells':
                     for obj in layer:
                         new_cell = pg.Rect(obj.x, obj.y, obj.width, obj.height)
                         self.cells.append({"rect": new_cell, "empty": True})
-        print(self.cells)
 
-        self.sunflower_picture = pg.image.load('pictures/plants/SunFlower.png')
-        self.wallnut_picture = pg.image.load('pictures/plants/WallNut_0.png')
-        self.peashooter_picture = pg.image.load('pictures/plants/Peashooter_0.png')
+        self.wallnut_pictures = [pg.image.load('pictures/plants/WallNut_0.png')]
+        self.peashooter_pictures = [pg.image.load('pictures/plants/Peashooter_0.png')]
     def fill_cell(self, pos, plant, plant_amount, sun_object):
         for cell in self.cells:
             if cell["rect"].collidepoint(pos) and plant.active_plant:
@@ -28,13 +31,13 @@ class Cells():
                         cell["empty"] = False
                         sun_object.suns_total -= plant_amount
                         if plant.active_plant == 'sunflower':
-                            self.plants.append({"image":self.sunflower_picture,"x":cell["rect"].x, "y":cell["rect"].y, "rect": cell["rect"], "points": 20})
+                            self.plants.append({"index":0, "image":self.sunflower_pictures,"x":cell["rect"].x, "y":cell["rect"].y, "rect": cell["rect"], "points": 20})
                             plant.active_plant = None
                         elif plant.active_plant == 'wallnut':
-                            self.plants.append({"image": self.wallnut_picture, "x":cell["rect"].x, "y":cell["rect"].y, "rect": cell["rect"], "points": 50})
+                            self.plants.append({"index":0, "image": self.wallnut_pictures, "x":cell["rect"].x, "y":cell["rect"].y, "rect": cell["rect"], "points": 50})
                             plant.active_plant = None
                         elif plant.active_plant:
-                            self.plants.append({"image": self.peashooter_picture, "x": cell["rect"].x, "y": cell["rect"].y, "rect": cell["rect"]})
+                            self.plants.append({"index":0, "image": self.peashooter_pictures, "x": cell["rect"].x, "y": cell["rect"].y, "rect": cell["rect"]})
                             plant.active_plant = None
                     else:
                         print('Недостаточно солнц для покупки растения')
@@ -42,5 +45,10 @@ class Cells():
                     print('Клетка уже занята')
 
     def draw_plants(self):
+        if time.time()-self.plant_time>=0.05:
+            for plant in self.plants:
+                plant["index"] = (plant["index"] + 1) % len(plant["image"])
+            self.plant_time = time.time()
+
         for plant in self.plants:
-            self.screen.blit(plant["image"],(plant["x"], plant["y"]))
+            self.screen.blit(plant["image"][plant["index"]], (plant["x"], plant["y"]))
