@@ -15,6 +15,9 @@ class Sun():
             self.image.fill('yellow')
 
         self.suns.append(self.create_sun())
+        self.sunflower_spawn_time = time.time()
+
+        self.sunflower_suns = []
 
         pg.mixer.init()
 
@@ -31,6 +34,9 @@ class Sun():
                 sun["rect"].y = int(sun["float_y"])
                 self.screen.blit(self.image, sun["rect"].topleft)
 
+        for sun in self.sunflower_suns:
+            self.screen.blit(self.image, sun["rect"])
+
     def check_click(self, pos):
         for sun in self.suns:
             if not sun["collected"] and sun["rect"].collidepoint(pos):
@@ -38,7 +44,27 @@ class Sun():
                 self.suns_total += 25
                 self.sun_collected.play()
 
+        for sun in self.sunflower_suns:
+            if not sun["collected"] and sun["rect"].collidepoint(pos):
+                sun["collected"] = True
+                self.suns_total += 25
+                self.sun_collected.play()
+            if time.time()-sun["time"]>=2:
+                sun["collected"] = True
+
         self.suns = [sun for sun in self.suns if not sun["collected"]]
+        self.sunflower_suns = [sun for sun in self.sunflower_suns if not sun["collected"]]
 
     def create_sun(self):
         return {"rect": self.image.get_rect(topleft=(random.randint(250, 1000), 50)), "float_y": float(50), "collected": False}
+
+    def update_suns_amount(self, cells):
+        for plant in cells.plants:
+            if plant["type"]=='sunflower':
+                if time.time()-self.sunflower_spawn_time>=8:
+                    self.sunflower_suns.append(self.sunflower_sun(plant["rect"]))
+                    print('создано солнце')
+                    self.sunflower_spawn_time = time.time()
+
+    def sunflower_sun(self, rect):
+        return {"rect": pg.Rect(rect.x+50, rect.y, rect.width, rect.height), "collected": False, "time": time.time()}

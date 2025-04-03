@@ -57,6 +57,7 @@ class Game():
             self.map = 'level1'
         self.zombies_1.move()
         self.zombies_1.hit_plant(self.cells)
+        self.sun.update_suns_amount(self.cells)
     def update(self):
         ...
     def draw(self):
@@ -73,6 +74,8 @@ class Game():
 
                         if tile:
                             self.screen.blit(tile, (x*self.tmx_map.tilewidth, y*self.tmx_map.tileheight))
+            self.cells.draw_plants()
+
             self.sun.draw()
             self.screen.blit(self.suns_count,(0,0))
             self.screen.blit(self.suns_count_rect,(10,61))
@@ -80,8 +83,6 @@ class Game():
             self.screen.blit(self.amount,(32,60))
 
             self.plants.draw_cards(self.sun.suns_total)
-
-            self.cells.draw_plants()
             self.zombies_1.draw_zombies(self.cells)
 
         pg.display.flip()

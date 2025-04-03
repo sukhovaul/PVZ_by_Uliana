@@ -31,13 +31,13 @@ class Cells():
                         cell["empty"] = False
                         sun_object.suns_total -= plant_amount
                         if plant.active_plant == 'sunflower':
-                            self.plants.append({"index":0, "image":self.sunflower_pictures,"x":cell["rect"].x, "y":cell["rect"].y, "rect": cell["rect"], "points": 20})
+                            self.plants.append({"index":0, "image":self.sunflower_pictures,"x":cell["rect"].x, "y":cell["rect"].y, "rect": cell["rect"], "points": 20, "type": 'sunflower'})
                             plant.active_plant = None
                         elif plant.active_plant == 'wallnut':
-                            self.plants.append({"index":0, "image": self.wallnut_pictures, "x":cell["rect"].x, "y":cell["rect"].y, "rect": cell["rect"], "points": 50})
+                            self.plants.append({"index":0, "image": self.wallnut_pictures, "x":cell["rect"].x, "y":cell["rect"].y, "rect": cell["rect"], "points": 50, "type": 'wallnut'})
                             plant.active_plant = None
                         elif plant.active_plant:
-                            self.plants.append({"index":0, "image": self.peashooter_pictures, "x": cell["rect"].x, "y": cell["rect"].y, "rect": cell["rect"]})
+                            self.plants.append({"index":0, "image": self.peashooter_pictures, "x": cell["rect"].x, "y": cell["rect"].y, "rect": cell["rect"], "points": 20, "type": 'peashooter'})
                             plant.active_plant = None
                     else:
                         print('Недостаточно солнц для покупки растения')
