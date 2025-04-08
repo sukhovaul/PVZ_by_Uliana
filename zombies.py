@@ -27,7 +27,6 @@ class Zombies():
                 zombie_x = float(random.randint(890,940))
                 zombie_rect = pg.Rect(int(zombie_x)+80,zombie_y, 40,144)
                 self.zombies.append({"x": zombie_x, "y": zombie_y, "rect": zombie_rect, "attack_index":0})
-                print(self.zombies)
 
     def hit_plant(self, cells):
         for zombie in self.zombies:
@@ -38,17 +37,16 @@ class Zombies():
                         zombie["attack_index"]=(zombie["attack_index"]+1)%len(self.zombies_attack_pictures)
                         self.zombie_attack = time.time()
                     if time.time()-self.hit_time>=2:
-                        plant["points"]-=10
-                        print(plant["rect"])
-                        print(zombie["rect"])
-                        print(plant["points"])
-                        self.hit_time = time.time()
+                        if plant["points"]<=0:
+                            plant["active"] = False
+                        else:
+                            plant["points"]-=10
+                            self.hit_time = time.time()
     def draw_zombies(self, cells):
         for zombie in self.zombies:
             if any(zombie["rect"].colliderect(plant["rect"]) for plant in cells.plants):
                 self.screen.blit(self.zombies_attack_pictures[zombie["attack_index"]], (zombie["x"], zombie["y"]))
             else:
-                # Иначе рисуем обычного зомби
                 if time.time() - self.picture_time >= 0.1:
                     self.zombie_index = (self.zombie_index + 1) % len(self.zombies_pictures)
                     self.picture_time = time.time()

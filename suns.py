@@ -37,6 +37,13 @@ class Sun():
         for sun in self.sunflower_suns:
             self.screen.blit(self.image, sun["rect"])
 
+        for sun in self.sunflower_suns:
+            if time.time()-sun["time"]>=4:
+                sun["collected"] = True
+
+        self.suns = [sun for sun in self.suns if not sun["collected"]]
+        self.sunflower_suns = [sun for sun in self.sunflower_suns if not sun["collected"]]
+
     def check_click(self, pos):
         for sun in self.suns:
             if not sun["collected"] and sun["rect"].collidepoint(pos):
@@ -49,11 +56,6 @@ class Sun():
                 sun["collected"] = True
                 self.suns_total += 25
                 self.sun_collected.play()
-            if time.time()-sun["time"]>=2:
-                sun["collected"] = True
-
-        self.suns = [sun for sun in self.suns if not sun["collected"]]
-        self.sunflower_suns = [sun for sun in self.sunflower_suns if not sun["collected"]]
 
     def create_sun(self):
         return {"rect": self.image.get_rect(topleft=(random.randint(250, 1000), 50)), "float_y": float(50), "collected": False}
@@ -63,7 +65,6 @@ class Sun():
             if plant["type"]=='sunflower':
                 if time.time()-self.sunflower_spawn_time>=8:
                     self.sunflower_suns.append(self.sunflower_sun(plant["rect"]))
-                    print('создано солнце')
                     self.sunflower_spawn_time = time.time()
 
     def sunflower_sun(self, rect):
