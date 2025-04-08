@@ -55,11 +55,11 @@ class Game():
                 self.plants.choose_plant(event.pos)
         if self.main_menu.action == 'start_game':
             self.map = 'level1'
+    def update(self):
         self.zombies_1.move()
         self.zombies_1.hit_plant(self.cells)
         self.sun.update_suns_amount(self.cells)
-    def update(self):
-        ...
+        self.zombies_1.pea_hit(self.cells)
     def draw(self):
         self.screen.fill('black')
 

@@ -41,7 +41,8 @@ class Cells():
                         elif plant.active_plant == 'peashooter':
                             self.plants.append({"index":0, "image": self.peashooter_pictures, "x": cell["rect"].x, "y": cell["rect"].y, "rect": cell["rect"], "points": 20, "type": 'peashooter', "active": True})
                             plant.active_plant = None
-                            self.peas.append({"x":cell["rect"].x, "y": cell["rect"].y})
+                            pea_rect = pg.Rect(cell["rect"].x, cell["rect"].y, 23, 23)
+                            self.peas.append({"x":cell["rect"].x, "y": cell["rect"].y, "rect": pea_rect})
                     else:
                         print('Недостаточно солнц для покупки растения')
                 else:
