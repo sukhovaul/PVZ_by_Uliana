@@ -32,7 +32,6 @@ class Game():
 
         self.plants = plants.Plants(self.screen)
         self.zombies_1 = zombies.Zombies(1, self.screen)
-        self.zombies_1.create_zombies()
 
         self.run()
     def run(self):
@@ -56,6 +55,7 @@ class Game():
         if self.main_menu.action == 'start_game':
             self.map = 'level1'
     def update(self):
+        self.zombies_1.create_zombies()
         self.zombies_1.move()
         self.zombies_1.hit_plant(self.cells)
         self.sun.update_suns_amount(self.cells)
