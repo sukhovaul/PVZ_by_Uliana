@@ -60,6 +60,7 @@ class Game():
         self.zombies_1.hit_plant(self.cells)
         self.sun.update_suns_amount(self.cells)
         self.zombies_1.pea_hit(self.cells)
+        self.cells.peashooter(self.zombies_1)
     def draw(self):
         self.screen.fill('black')
 

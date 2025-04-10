@@ -27,6 +27,7 @@ class Zombies():
                 zombie_x = float(random.randint(890,940))
                 zombie_rect = pg.Rect(int(zombie_x)+80,zombie_y, 40,144)
                 self.zombies.append({"x": zombie_x, "y": zombie_y, "rect": zombie_rect, "attack_index":0, "points": 20})
+        print(self.zombies)
 
     def hit_plant(self, cells):
         for zombie in self.zombies:
@@ -64,5 +65,9 @@ class Zombies():
         for pea in cells.peas:
             for zombie in self.zombies:
                 if zombie["rect"].colliderect(pea["rect"]):
-                    zombie["points"]-=5
-                    print(zombie["points"])
+                    if not pea["shot"]:
+                        zombie["points"]-=5
+                        print(zombie["points"])
+                        pea["shot"]=True
+
+        self.zombies = [zombie for zombie in self.zombies if zombie["points"]>0]

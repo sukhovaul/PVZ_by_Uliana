@@ -5,7 +5,7 @@ import time
 class Sun():
     def __init__(self, screen):
         self.screen = screen
-        self.suns_total = 0
+        self.suns_total = 200
         self.suns = []
         self.last_spawn_time = time.time()
         try:
@@ -24,7 +24,7 @@ class Sun():
         self.sun_collected = pg.mixer.Sound('music/achievement.mp3')
 
     def draw(self):
-        if time.time() - self.last_spawn_time >= 5:
+        if time.time() - self.last_spawn_time >= 2:
             self.last_spawn_time = time.time()
             self.suns.append(self.create_sun())
 

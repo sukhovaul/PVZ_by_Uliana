@@ -23,6 +23,7 @@ class Cells():
                     for obj in layer:
                         new_cell = pg.Rect(obj.x, obj.y, obj.width, obj.height)
                         self.cells.append({"rect": new_cell, "empty": True})
+        print(self.cells)
 
     def fill_cell(self, pos, plant, plant_amount, sun_object):
         for cell in self.cells:
@@ -39,10 +40,8 @@ class Cells():
                             self.plants.append({"index":0, "image": self.wallnut_pictures, "x":cell["rect"].x, "y":cell["rect"].y, "rect": cell["rect"], "points": 50, "type": 'wallnut', "active": True})
                             plant.active_plant = None
                         elif plant.active_plant == 'peashooter':
-                            self.plants.append({"index":0, "image": self.peashooter_pictures, "x": cell["rect"].x, "y": cell["rect"].y, "rect": cell["rect"], "points": 20, "type": 'peashooter', "active": True})
+                            self.plants.append({"index":0, "image": self.peashooter_pictures, "x": cell["rect"].x, "y": cell["rect"].y, "rect": cell["rect"], "points": 20, "type": 'peashooter', "active": True, "last_shot": time.time()})
                             plant.active_plant = None
-                            pea_rect = pg.Rect(cell["rect"].x, cell["rect"].y, 23, 23)
-                            self.peas.append({"x":cell["rect"].x, "y": cell["rect"].y, "rect": pea_rect})
                     else:
                         print('Недостаточно солнц для покупки растения')
                 else:
@@ -56,8 +55,20 @@ class Cells():
 
         for plant in self.plants:
             self.screen.blit(plant["image"][plant["index"]], (plant["x"], plant["y"]))
-        for pea in self.peas:
-            pea["x"]+=5
-            self.screen.blit(self.pea_image, (pea["x"], pea["y"]))
 
         self.plants = [plant for plant in self.plants if plant["active"]]
+
+        for pea in self.peas:
+            pea["rect"].x += 5
+            self.screen.blit(self.pea_image, (pea["rect"].x, pea["rect"].y))
+    def peashooter(self, zombies):
+        for plant in self.plants:
+            if plant["type"] == 'peashooter':
+                for zombie in zombies.zombies:
+                    if zombie["rect"].y-plant["rect"].y <10:
+                        if time.time() - plant["last_shot"] >= 1:
+                            pea_rect = pg.Rect(plant["rect"].x, plant["rect"].y, 23, 23)
+                            self.peas.append({"rect": pea_rect, "shot": False})
+                            plant["last_shot"] = time.time()
+                            print('пуля создана')
+                        break
