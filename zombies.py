@@ -21,22 +21,22 @@ class Zombies():
         self.zombie_attack = time.time()
 
         self.last_zombie_spawn_time = time.time()
-        self.zombie_index = 0
+        self.zombie_spawn_index = 0 #переменная отвечает за индекс количество зомби и время их добавления
 
     def create_zombies(self):
         if self.level == 1:
-            zombies_pairs = [2, 1, 1, 1]
-            zombie_time = [5,7,5,7]
-            if self.zombie_index<len(zombies_pairs):
-                if time.time()-self.last_zombie_spawn_time>=zombie_time[self.zombie_index]:
-                    print(self.zombie_index)
-                    for i in range(zombies_pairs[self.zombie_index]):
+            zombies_pairs = [2, 1, 1, 1] #количество зомби в каждой волне
+            zombie_time = [5,7,5,7] #время между созданием зомби
+            if self.zombie_spawn_index<len(zombies_pairs):
+                if time.time()-self.last_zombie_spawn_time>=zombie_time[self.zombie_spawn_index]:
+                    print(self.zombie_spawn_index)
+                    for i in range(zombies_pairs[self.zombie_spawn_index]):
                         zombie_y = random.choice(self.ways)
                         zombie_x = float(random.randint(890,940))
                         zombie_rect = pg.Rect(int(zombie_x)+80,zombie_y, 40,144)
                         self.zombies.append({"x": zombie_x, "y": zombie_y, "rect": zombie_rect, "attack_index":0, "points": 20})
                     self.last_zombie_spawn_time = time.time()
-                    self.zombie_index += 1
+                    self.zombie_spawn_index += 1
 
     def hit_plant(self, cells):
         for zombie in self.zombies:
