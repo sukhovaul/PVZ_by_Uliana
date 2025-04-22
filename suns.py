@@ -2,10 +2,11 @@ import pygame as pg
 import random
 import time
 
-class Sun():
+
+class Sun:
     def __init__(self, screen):
         self.screen = screen
-        self.suns_total = 0
+        self.suns_total = 100
         self.suns = []
         self.last_spawn_time = time.time()
         try:
@@ -38,7 +39,7 @@ class Sun():
             self.screen.blit(self.image, sun["rect"])
 
         for sun in self.sunflower_suns:
-            if time.time()-sun["time"]>=5:
+            if time.time() - sun["time"] >= 5:
                 sun["collected"] = True
 
         self.suns = [sun for sun in self.suns if not sun["collected"]]
@@ -58,14 +59,15 @@ class Sun():
                 self.sun_collected.play()
 
     def create_sun(self):
-        return {"rect": self.image.get_rect(topleft=(random.randint(250, 1000), 50)), "float_y": float(50), "collected": False}
+        return {"rect": self.image.get_rect(topleft=(random.randint(250, 1000), 50)), "float_y": float(50),
+                "collected": False}
 
     def update_suns_amount(self, cells):
         for plant in cells.plants:
-            if plant["type"]=='sunflower':
-                if time.time()-self.sunflower_spawn_time>=15:
+            if plant["type"] == 'sunflower':
+                if time.time() - self.sunflower_spawn_time >= 15:
                     self.sunflower_suns.append(self.sunflower_sun(plant["rect"]))
                     self.sunflower_spawn_time = time.time()
 
     def sunflower_sun(self, rect):
-        return {"rect": pg.Rect(rect.x+50, rect.y, rect.width, rect.height), "collected": False, "time": time.time()}
+        return {"rect": pg.Rect(rect.x + 50, rect.y, rect.width, rect.height), "collected": False, "time": time.time()}
