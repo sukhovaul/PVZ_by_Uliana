@@ -40,7 +40,7 @@ class Cells():
                             self.plants.append({"index":0, "image": self.wallnut_pictures, "x":cell["rect"].x, "y":cell["rect"].y, "rect": cell["rect"], "points": 50, "type": 'wallnut', "active": True})
                             plant.active_plant = None
                         elif plant.active_plant == 'peashooter':
-                            self.plants.append({"index":0, "image": self.peashooter_pictures, "x": cell["rect"].x, "y": cell["rect"].y, "rect": cell["rect"], "points": 20, "type": 'peashooter', "active": True, "last_shot": time.time()})
+                            self.plants.append({"index":0, "image": self.peashooter_pictures, "x": cell["rect"].x, "y": cell["rect"].y, "rect": cell["rect"], "points": 20, "type": 'peashooter', "active": True, "last_shot": time.time(), "line":((cell["rect"].y-60)//100)+1})
                             plant.active_plant = None
                     else:
                         print('Недостаточно солнц для покупки растения')
@@ -65,8 +65,8 @@ class Cells():
         for plant in self.plants:
             if plant["type"] == 'peashooter':
                 for zombie in zombies.zombies:
-                    if zombie["rect"].y-plant["rect"].y <10:
-                        if time.time() - plant["last_shot"] >= 1:
+                    if zombie["line"]==plant["line"]:
+                        if time.time() - plant["last_shot"] >= 1.4:
                             pea_rect = pg.Rect(plant["rect"].x, plant["rect"].y, 23, 23)
                             self.peas.append({"rect": pea_rect, "shot": False})
                             plant["last_shot"] = time.time()

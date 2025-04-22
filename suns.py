@@ -5,7 +5,7 @@ import time
 class Sun():
     def __init__(self, screen):
         self.screen = screen
-        self.suns_total = 200
+        self.suns_total = 0
         self.suns = []
         self.last_spawn_time = time.time()
         try:
@@ -24,7 +24,7 @@ class Sun():
         self.sun_collected = pg.mixer.Sound('music/achievement.mp3')
 
     def draw(self):
-        if time.time() - self.last_spawn_time >= 2:
+        if time.time() - self.last_spawn_time >= 15:
             self.last_spawn_time = time.time()
             self.suns.append(self.create_sun())
 
@@ -38,7 +38,7 @@ class Sun():
             self.screen.blit(self.image, sun["rect"])
 
         for sun in self.sunflower_suns:
-            if time.time()-sun["time"]>=4:
+            if time.time()-sun["time"]>=5:
                 sun["collected"] = True
 
         self.suns = [sun for sun in self.suns if not sun["collected"]]
@@ -63,7 +63,7 @@ class Sun():
     def update_suns_amount(self, cells):
         for plant in cells.plants:
             if plant["type"]=='sunflower':
-                if time.time()-self.sunflower_spawn_time>=8:
+                if time.time()-self.sunflower_spawn_time>=15:
                     self.sunflower_suns.append(self.sunflower_sun(plant["rect"]))
                     self.sunflower_spawn_time = time.time()
 
