@@ -65,9 +65,9 @@ class Sun:
     def update_suns_amount(self, cells):
         for plant in cells.plants:
             if plant["type"] == 'sunflower':
-                if time.time() - self.sunflower_spawn_time >= 15:
+                if time.time() - plant["last_sun_spawn_time"] >= 15:
                     self.sunflower_suns.append(self.sunflower_sun(plant["rect"]))
-                    self.sunflower_spawn_time = time.time()
+                    plant["last_sun_spawn_time"] = time.time()
 
     def sunflower_sun(self, rect):
         return {"rect": pg.Rect(rect.x + 50, rect.y, rect.width, rect.height), "collected": False, "time": time.time()}

@@ -45,23 +45,27 @@ class Zombies:
             zombie_time = [10, 30, 20, 25, 30, 30, 25, 30]  # время между созданием зомби
             zombie_types = [1, 1, 1, 2, 1, 2, 1, 2, 1, 1, 1]
             zombie_type_index = 0
+
             if self.zombie_spawn_index < len(zombies_pairs):
                 if time.time() - self.last_zombie_spawn_time >= zombie_time[self.zombie_spawn_index]:
                     for i in range(zombies_pairs[self.zombie_spawn_index]):
                         zombie_y = random.choice(self.ways)
                         zombie_x = float(random.randint(890, 940))
                         zombie_rect = pg.Rect(int(zombie_x) + 80, zombie_y, 40, 144)
+
                         if zombie_types[zombie_type_index] == 1:
                             zombie_points = 20
                             zombie_images = self.zombies_pictures
                         elif zombie_types[zombie_type_index]:
                             zombie_points = 40
                             zombie_images = self.coneheaad_zombie_pictures
+
                         self.zombies.append({"x": zombie_x, "y": zombie_y, "rect": zombie_rect, "points": zombie_points,
                                              "zombie_pictures": zombie_images, "index": 0, "attack_index": 0,
                                              "picture_time": time.time(), "line": ((zombie_y - 20) // 100) + 1,
                                              "die_animation": False, "dead": False, "dead_animation_index": 0,
                                              "die_time": time.time()})
+
                         self.complete_rect.x -= 13
                         self.complete_rect.width += 13
                         zombie_type_index += 1
@@ -86,13 +90,14 @@ class Zombies:
     def draw_zombies(self, cells):
         for zombie in self.zombies:
             if zombie["die_animation"]:
-                if time.time()-zombie["die_time"] >= 0.3:
+                if time.time()-zombie["die_time"] >= 0.2:
                     zombie["dead_animation_index"] += 1
                     zombie["die_time"] = time.time()
                     if zombie["dead_animation_index"] == 9:
                         zombie["dead"] = True
                         zombie["die_animation"] = False
                 self.screen.blit(self.zombies_die[zombie["dead_animation_index"]], (zombie["x"], zombie["y"]))
+
             if zombie["zombie_pictures"]:
                 if any(zombie["rect"].colliderect(plant["rect"]) for plant in cells.plants):
                     self.screen.blit(self.zombies_attack_pictures[zombie["attack_index"]], (zombie["x"], zombie["y"]))
@@ -121,6 +126,7 @@ class Zombies:
                     if not pea["shot"]:
                         zombie["points"] -= 2
                         pea["shot"] = True
+
                     if zombie["points"] <= 20 and zombie["zombie_pictures"] == self.coneheaad_zombie_pictures:
                         zombie["zombie_pictures"] = self.zombies_pictures
                     if zombie["points"] <= 4 and zombie["zombie_pictures"] == self.zombies_pictures:

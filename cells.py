@@ -38,7 +38,8 @@ class Cells:
                         if plant.active_plant == 'sunflower':
                             self.plants.append(
                                 {"index": 0, "image": self.sunflower_pictures, "x": cell["rect"].x, "y": cell["rect"].y,
-                                 "rect": cell["rect"], "points": 20, "type": 'sunflower', "active": True})
+                                 "rect": cell["rect"], "points": 20, "type": 'sunflower', "active": True,
+                                 "last_sun_spawn_time": time.time()})
                             plant.active_plant = None
                         elif plant.active_plant == 'wallnut':
                             self.plants.append(
