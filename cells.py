@@ -89,5 +89,4 @@ class Cells:
                             pea_rect = pg.Rect(plant["rect"].x, plant["rect"].y, 23, 23)
                             self.peas.append({"rect": pea_rect, "shot": False})
                             plant["last_shot"] = time.time()
-                            print('пуля создана')
                         break

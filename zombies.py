@@ -10,7 +10,7 @@ class Zombies:
         self.screen = screen
         self.ways = [20, 120, 220, 320, 420]
 
-        self.zombies_killed = 0
+        self.zombies_killed = 10
 
         self.zombies_move = True
 
@@ -35,6 +35,8 @@ class Zombies:
 
         self.complete_rect = pg.Rect(1003, 556, 0, 10)
         self.complete_line = pg.image.load('pictures/Level_progress.png')
+
+        self.victory = False
 
         self.last_zombie_spawn_time = time.time()
         self.zombie_spawn_index = 0  # переменная отвечает за индекс количество зомби и время их добавления
@@ -96,6 +98,7 @@ class Zombies:
                     if zombie["dead_animation_index"] == 9:
                         zombie["dead"] = True
                         zombie["die_animation"] = False
+                        self.zombies_killed += 1
                 self.screen.blit(self.zombies_die[zombie["dead_animation_index"]], (zombie["x"], zombie["y"]))
 
             if zombie["zombie_pictures"]:
@@ -139,4 +142,4 @@ class Zombies:
 
         self.zombies = [zombie for zombie in self.zombies if not zombie["dead"]]
         if self.zombies_killed == 11:
-            print('You Won')
+            self.victory = True

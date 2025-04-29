@@ -58,10 +58,22 @@ class Game:
                 self.sun.check_click(event.pos)
                 self.cells.fill_cell(event.pos, self.plants, self.plants.plant_amount, self.sun)
                 self.plants.choose_plant(event.pos)
+
+            elif self.map == 'levels_menu' and event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+                if self.levels_menu.level1_icon_rect.collidepoint(event.pos):
+                    self.levels_menu.level = 1
+
         if self.main_menu.action == 'start_game':
+            self.map = 'levels_menu'
+            self.main_menu.action = None
+
+        elif self.levels_menu.level == 1:
             self.map = 'level1'
             self.init_level(1)
-            self.main_menu.action = None
+            self.levels_menu.level = None
+
+        elif self.map == 'level1' and self.zombies_1.victory:
+            self.map = 'levels_menu'
 
     def update(self):
         if self.map == 'level1':
@@ -78,10 +90,10 @@ class Game:
         if self.map == 'main_menu':
             self.main_menu.run()
 
-        elif self.map == 'levels_menu':
-            self.levels_menu.draw()
+        if self.map == 'levels_menu':
+            self.levels_menu.run()
 
-        elif self.map == 'level1':
+        if self.map == 'level1':
             for layer in self.tmx_map:
                 if isinstance(layer, pytmx.TiledTileLayer):
                     for x, y, gid in layer:
