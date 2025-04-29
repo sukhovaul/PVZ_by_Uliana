@@ -6,10 +6,10 @@ import suns
 import cells
 import plants
 import zombies
+import levels_menu
 
 pg.init()
 pg.mixer.init()
-
 
 class Game:
     def __init__(self):
@@ -19,23 +19,25 @@ class Game:
 
         self.tmx_map = pytmx.load_pygame('maps/level1.tmx')
         self.map = 'main_menu'
-        self.sun = suns.Sun(self.screen)
-
-        self.cells = cells.Cells(self.tmx_map, self.screen)
 
         self.main_menu = main_menu.Menu(SCREEN_WIDTH, SCREEN_HEIGHT, 'maps/MainMenu.png')
+        self.levels_menu = levels_menu.Level_menu(self.screen)
 
-        self.clock = pg.time.Clock()  # добавляем объект clock для регулирования fps
+        self.clock = pg.time.Clock()
 
         self.suns_count = pg.image.load('pictures/suns_count.png')
         self.suns_count_rect = pg.Surface((54, 21))
         self.suns_count_rect.fill((227, 203, 170))
         self.amount_font = pg.font.Font('fonts/main_font.ttf', 20)
 
-        self.plants = plants.Plants(self.screen)
-        self.zombies_1 = zombies.Zombies(1, self.screen)
-
         self.run()
+
+    def init_level(self, level_num):
+        self.tmx_map = pytmx.load_pygame(f'maps/level{level_num}.tmx')
+        self.sun = suns.Sun(self.screen)
+        self.cells = cells.Cells(self.tmx_map, self.screen)
+        self.plants = plants.Plants(self.screen)
+        self.zombies_1 = zombies.Zombies(level_num, self.screen)
 
     def run(self):
         running = True
@@ -58,14 +60,17 @@ class Game:
                 self.plants.choose_plant(event.pos)
         if self.main_menu.action == 'start_game':
             self.map = 'level1'
+            self.init_level(1)
+            self.main_menu.action = None
 
     def update(self):
-        self.zombies_1.create_zombies()
-        self.zombies_1.move()
-        self.zombies_1.hit_plant(self.cells)
-        self.sun.update_suns_amount(self.cells)
-        self.zombies_1.pea_hit(self.cells)
-        self.cells.peashooter(self.zombies_1)
+        if self.map == 'level1':
+            self.zombies_1.create_zombies()
+            self.zombies_1.move()
+            self.zombies_1.hit_plant(self.cells)
+            self.sun.update_suns_amount(self.cells)
+            self.zombies_1.pea_hit(self.cells)
+            self.cells.peashooter(self.zombies_1)
 
     def draw(self):
         self.screen.fill('black')
@@ -73,7 +78,10 @@ class Game:
         if self.map == 'main_menu':
             self.main_menu.run()
 
-        if self.map == 'level1':
+        elif self.map == 'levels_menu':
+            self.levels_menu.draw()
+
+        elif self.map == 'level1':
             for layer in self.tmx_map:
                 if isinstance(layer, pytmx.TiledTileLayer):
                     for x, y, gid in layer:

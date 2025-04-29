@@ -29,33 +29,41 @@ class Cells:
 
     def fill_cell(self, pos, plant, plant_amount, sun_object):
         for cell in self.cells:
-            if cell["rect"].collidepoint(pos) and plant.active_plant:
-                if cell["empty"]:
+            if cell["rect"].collidepoint(pos) and plant.active_plant and cell["empty"]:
+                if sun_object.suns_total >= plant_amount:
+                    sun_object.suns_total -= plant_amount
+                    cell["empty"] = False
 
-                    if sun_object.suns_total >= plant_amount:
-                        cell["empty"] = False
-                        sun_object.suns_total -= plant_amount
-                        if plant.active_plant == 'sunflower':
-                            self.plants.append(
-                                {"index": 0, "image": self.sunflower_pictures, "x": cell["rect"].x, "y": cell["rect"].y,
-                                 "rect": cell["rect"], "points": 20, "type": 'sunflower', "active": True,
-                                 "last_sun_spawn_time": time.time()})
-                            plant.active_plant = None
-                        elif plant.active_plant == 'wallnut':
-                            self.plants.append(
-                                {"index": 0, "image": self.wallnut_pictures, "x": cell["rect"].x, "y": cell["rect"].y,
-                                 "rect": cell["rect"], "points": 50, "type": 'wallnut', "active": True})
-                            plant.active_plant = None
-                        elif plant.active_plant == 'peashooter':
-                            self.plants.append({"index": 0, "image": self.peashooter_pictures, "x": cell["rect"].x,
-                                                "y": cell["rect"].y, "rect": cell["rect"], "points": 20,
-                                                "type": 'peashooter', "active": True, "last_shot": time.time(),
-                                                "line": ((cell["rect"].y - 60) // 100) + 1})
-                            plant.active_plant = None
-                    else:
-                        print('Недостаточно солнц для покупки растения')
-                else:
-                    print('Клетка уже занята')
+                    new_plant = {
+                        "index": 0,
+                        "x": cell["rect"].x,
+                        "y": cell["rect"].y,
+                        "rect": cell["rect"],
+                        "active": True
+                    }
+
+                    if plant.active_plant == 'sunflower':
+                        new_plant.update({
+                            "image": self.sunflower_pictures,
+                            "type": 'sunflower',
+                            "last_sun_spawn_time": time.time()
+                        })
+                    elif plant.active_plant == 'peashooter':
+                        new_plant.update({
+                            "image": self.peashooter_pictures,
+                            "type": 'peashooter',
+                            "last_shot": time.time(),
+                            "line": ((cell["rect"].y - 60) // 100) + 1
+                        })
+                    elif plant.active_plant == 'wallnut':
+                        new_plant.update({
+                            "image": self.wallnut_pictures,
+                            "type": 'wallnut'
+                        })
+
+                    self.plants.append(new_plant)
+                    plant.plant_placed()
+                    plant.active_plant = None
 
     def draw_plants(self):
         if time.time() - self.plant_time >= 0.07:
