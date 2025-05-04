@@ -23,6 +23,8 @@ class Plants():
         self.wallnut_time = 0
         self.peashooter_time = 0
 
+        self.level = None
+
         self.sunflower_rect = pg.Rect(64, 0, 64, 89)
         self.wallnut_rect = pg.Rect(192, 0, 64, 89)
         self.peashooter_rect = pg.Rect(128, 0, 64, 89)
@@ -37,27 +39,28 @@ class Plants():
 
     def draw_cards(self, suns_amount):
         current_time = time.time()
-        self.screen.blit(self.gray_sunflower, (74, 5))
-        self.screen.blit(self.gray_peashooter, (132, 5))
-        self.screen.blit(self.gray_wallnut, (190, 5))
+        if self.level >= 1:
+            self.screen.blit(self.gray_sunflower, (74, 5))
+            self.screen.blit(self.gray_peashooter, (132, 5))
+        elif self.level >= 2:
+            self.screen.blit(self.gray_wallnut, (190, 5))
 
         for card in self.cards:
             if card["plant"] == 'sunflower':
-                card["availible"] = (suns_amount >= card["amount"] and
-                                     current_time >= self.sunflower_time)
-                if card["availible"]:
+                card["availible"] = (suns_amount >= card["amount"] and current_time >= self.sunflower_time)
+                if card["availible"] and self.level>=1:
                     self.screen.blit(self.sunflower_card, (74, 5))
 
             elif card["plant"] == 'peashooter':
                 card["availible"] = (suns_amount >= card["amount"] and
                                      current_time >= self.peashooter_time)
-                if card["availible"]:
+                if card["availible"]  and self.level >= 1:
                     self.screen.blit(self.peashooter_card, (132, 5))
 
             elif card["plant"] == 'wallnut':
                 card["availible"] = (suns_amount >= card["amount"] and
                                      current_time >= self.wallnut_time)
-                if card["availible"]:
+                if card["availible"] and self.level >= 2:
                     self.screen.blit(self.wallnut_card, (190, 5))
 
     def choose_plant(self, pos):

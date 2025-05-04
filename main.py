@@ -30,10 +30,12 @@ class Game:
         self.suns_count_rect.fill((227, 203, 170))
         self.amount_font = pg.font.Font('fonts/main_font.ttf', 20)
 
+        self.rect_wallnut_victory = pg.Rect(595, 515 , 185, 35)
+
         self.run()
 
     def init_level(self, level_num):
-        self.tmx_map = pytmx.load_pygame(f'maps/level{level_num}.tmx')
+        self.tmx_map = pytmx.load_pygame(f'maps/level1.tmx')
         self.sun = suns.Sun(self.screen)
         self.cells = cells.Cells(self.tmx_map, self.screen)
         self.plants = plants.Plants(self.screen)
@@ -59,9 +61,16 @@ class Game:
                 self.cells.fill_cell(event.pos, self.plants, self.plants.plant_amount, self.sun)
                 self.plants.choose_plant(event.pos)
 
+                if self.zombies_1.victory:
+                    if self.rect_wallnut_victory.collidepoint(event.pos):
+                        self.map = 'levels_menu'
+
             elif self.map == 'levels_menu' and event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
                 if self.levels_menu.level1_icon_rect.collidepoint(event.pos):
                     self.levels_menu.level = 1
+
+                elif self.levels_menu.level2_icon_rect.collidepoint(event.pos):
+                    self.levels_menu.level = 2
 
         if self.main_menu.action == 'start_game':
             self.map = 'levels_menu'
@@ -71,9 +80,13 @@ class Game:
             self.map = 'level1'
             self.init_level(1)
             self.levels_menu.level = None
+            self.plants.level = 1
 
-        elif self.map == 'level1' and self.zombies_1.victory:
-            self.map = 'levels_menu'
+        elif self.levels_menu.level == 2:
+            self.map = 'level2'
+            self.init_level(2)
+            self.levels_menu.level = None
+            self.plants.level = 2
 
     def update(self):
         if self.map == 'level1':
@@ -111,6 +124,19 @@ class Game:
 
             self.plants.draw_cards(self.sun.suns_total)
             self.zombies_1.draw_zombies(self.cells)
+
+            if self.zombies_1.victory:
+                self.screen.blit(pg.image.load('pictures/cards/wallnut_victory.png'),(300,0))
+                self.levels_menu.level2_availible = True
+
+        if self.map == 'level2':
+            for layer in self.tmx_map:
+                if isinstance(layer, pytmx.TiledTileLayer):
+                    for x, y, gid in layer:
+                        tile = self.tmx_map.get_tile_image_by_gid(gid)
+
+                        if tile:
+                            self.screen.blit(tile, (x * self.tmx_map.tilewidth, y * self.tmx_map.tileheight))
 
         pg.display.flip()
 

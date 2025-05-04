@@ -10,7 +10,7 @@ class Zombies:
         self.screen = screen
         self.ways = [20, 120, 220, 320, 420]
 
-        self.zombies_killed = 10
+        self.zombies_killed = 11
 
         self.zombies_move = True
 
