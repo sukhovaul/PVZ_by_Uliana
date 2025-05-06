@@ -10,7 +10,7 @@ class Zombies:
         self.screen = screen
         self.ways = [20, 120, 220, 320, 420]
 
-        self.zombies_killed = 11
+        self.zombies_killed = 0
 
         self.zombies_move = True
 
@@ -61,6 +61,42 @@ class Zombies:
                         elif zombie_types[zombie_type_index]:
                             zombie_points = 40
                             zombie_images = self.coneheaad_zombie_pictures
+
+                        self.zombies.append({"x": zombie_x, "y": zombie_y, "rect": zombie_rect, "points": zombie_points,
+                                             "zombie_pictures": zombie_images, "index": 0, "attack_index": 0,
+                                             "picture_time": time.time(), "line": ((zombie_y - 20) // 100) + 1,
+                                             "die_animation": False, "dead": False, "dead_animation_index": 0,
+                                             "die_time": time.time()})
+
+        elif self.level == 2:
+            zombies_pairs = [1, 1, 2, 0, 1, 1, 1, 5]  # количество зомби в каждой волне
+            zombie_time = [10, 10, 20, 25, 30, 30, 25, 30]  # время между созданием зомби
+            zombie_types = [3, 1, 1, 2, 1, 2, 3, 2, 1, 1, 1, 2]
+            zombie_type_index = 0
+            zombie_image_index = 0
+
+            if self.zombie_spawn_index < len(zombies_pairs):
+                if time.time() - self.last_zombie_spawn_time >= zombie_time[self.zombie_spawn_index]:
+                    for i in range(zombies_pairs[self.zombie_spawn_index]):
+                        zombie_y = random.choice(self.ways)
+                        zombie_x = float(random.randint(890, 940))
+                        zombie_rect = pg.Rect(int(zombie_x) + 80, zombie_y, 40, 144)
+
+                        if zombie_types[zombie_image_index] == 1:
+                            zombie_points = 20
+                            zombie_images = self.zombies_pictures
+                            zombie_image_index += 1
+                            print(zombie_image_index)
+                        elif zombie_types[zombie_image_index] == 2:
+                            zombie_points = 40
+                            zombie_images = self.coneheaad_zombie_pictures
+                            zombie_image_index += 1
+                            print(zombie_image_index)
+                        elif zombie_types[zombie_image_index] == 3:
+                            zombie_points = 60
+                            zombie_images = self.buckethead_zombie_pictures
+                            zombie_image_index += 1
+                            print(zombie_image_index)
 
                         self.zombies.append({"x": zombie_x, "y": zombie_y, "rect": zombie_rect, "points": zombie_points,
                                              "zombie_pictures": zombie_images, "index": 0, "attack_index": 0,
@@ -130,7 +166,7 @@ class Zombies:
                         zombie["points"] -= 2
                         pea["shot"] = True
 
-                    if zombie["points"] <= 20 and zombie["zombie_pictures"] == self.coneheaad_zombie_pictures:
+                    if zombie["points"] <= 20 and (zombie["zombie_pictures"] == self.coneheaad_zombie_pictures or zombie["zombie_pictures"]==self.buckethead_zombie_pictures):
                         zombie["zombie_pictures"] = self.zombies_pictures
                     if zombie["points"] <= 4 and zombie["zombie_pictures"] == self.zombies_pictures:
                         zombie["zombie_pictures"] = self.zombies_lost_head_pictures

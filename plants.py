@@ -42,7 +42,7 @@ class Plants():
         if self.level >= 1:
             self.screen.blit(self.gray_sunflower, (74, 5))
             self.screen.blit(self.gray_peashooter, (132, 5))
-        elif self.level >= 2:
+        if self.level >= 2:
             self.screen.blit(self.gray_wallnut, (190, 5))
 
         for card in self.cards:
