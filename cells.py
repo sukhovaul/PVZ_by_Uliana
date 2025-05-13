@@ -15,6 +15,7 @@ class Cells:
         self.sunflower_pictures = [pg.image.load(f'pictures/plants/sunflower/SunFlower_{i}.png') for i in range(18)]
         self.wallnut_pictures = [pg.image.load(f'pictures/plants/wallnut/WallNut_{i}.png') for i in range(16)]
         self.peashooter_pictures = [pg.image.load(f'pictures/plants/peashooter/Peashooter_{i}.png') for i in range(13)]
+        self.cherrybomb_pictures = [pg.image.load(f'pictures/plants/cherrybomb/CherryBomb_{i}.png') for i in range(7)]
 
         self.peas = []
         self.pea_image = pg.image.load('pictures/plants/peashooter/PeaNormal_0.png')
@@ -46,20 +47,31 @@ class Cells:
                         new_plant.update({
                             "image": self.sunflower_pictures,
                             "type": 'sunflower',
-                            "last_sun_spawn_time": time.time()
+                            "last_sun_spawn_time": time.time(),
+                            "points": 20
                         })
                     elif plant.active_plant == 'peashooter':
                         new_plant.update({
                             "image": self.peashooter_pictures,
                             "type": 'peashooter',
                             "last_shot": time.time(),
-                            "line": ((cell["rect"].y - 60) // 100) + 1
+                            "line": ((cell["rect"].y - 60) // 100) + 1,
+                            "points":20
                         })
                     elif plant.active_plant == 'wallnut':
                         new_plant.update({
                             "image": self.wallnut_pictures,
-                            "type": 'wallnut'
+                            "type": 'wallnut',
+                            "points":40
                         })
+
+                    elif plant.active_plant == "cherrybomb":
+                        new_plant.update(({
+                            "image":self.cherrybomb_pictures,
+                            "type":'cherrybomb',
+                            "points":20,
+                            "time": time.time()
+                        }))
 
                     self.plants.append(new_plant)
                     plant.plant_placed()
@@ -90,3 +102,15 @@ class Cells:
                             self.peas.append({"rect": pea_rect, "shot": False})
                             plant["last_shot"] = time.time()
                         break
+
+
+    def cherrybomb(self, zombies):
+        for plant in self.plants:
+            if plant["type"] == 'cherrybomb':
+                if time.time()-plant["time"] >= 1:
+                    for zombie in zombies.zombies:
+                        if abs(plant["rect"].x - zombie["x"]) <= 100 and abs(plant["rect"].y - zombie["y"]) <= 120:
+                            zombie["points"] = 0
+                            zombie["die_animation"] = True
+                            zombie["zombie_pictures"] = None
+                    plant["active"] = False

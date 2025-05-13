@@ -12,8 +12,6 @@ class Zombies:
 
         self.zombies_killed = 0
 
-        self.zombies_move = True
-
         self.zombies_pictures = [pg.image.load(f'pictures/zombies/NormalZombie/NormalZombieWalk/Zombie_{i}.png') for i
                                  in range(22)]
         self.zombies_attack_pictures = [
@@ -38,15 +36,15 @@ class Zombies:
 
         self.victory = False
 
+        self.zombie_image_index = 0
         self.last_zombie_spawn_time = time.time()
         self.zombie_spawn_index = 0  # переменная отвечает за индекс количество зомби и время их добавления
 
     def create_zombies(self):
         if self.level == 1:
             zombies_pairs = [1, 1, 1, 0, 1, 0, 1, 6]  # количество зомби в каждой волне
-            zombie_time = [10, 30, 20, 25, 30, 30, 25, 30]  # время между созданием зомби
+            zombie_time = [30, 30, 20, 25, 30, 30, 25, 30]  # время между созданием зомби
             zombie_types = [1, 1, 1, 2, 1, 2, 1, 2, 1, 1, 1]
-            zombie_type_index = 0
 
             if self.zombie_spawn_index < len(zombies_pairs):
                 if time.time() - self.last_zombie_spawn_time >= zombie_time[self.zombie_spawn_index]:
@@ -55,58 +53,111 @@ class Zombies:
                         zombie_x = float(random.randint(890, 940))
                         zombie_rect = pg.Rect(int(zombie_x) + 80, zombie_y, 40, 144)
 
-                        if zombie_types[zombie_type_index] == 1:
+                        if zombie_types[self.zombie_image_index] == 1:
                             zombie_points = 20
                             zombie_images = self.zombies_pictures
-                        elif zombie_types[zombie_type_index]:
+                            self.zombie_image_index += 1
+                        elif zombie_types[self.zombie_image_index]:
                             zombie_points = 40
                             zombie_images = self.coneheaad_zombie_pictures
+                            self.zombie_image_index += 1
 
                         self.zombies.append({"x": zombie_x, "y": zombie_y, "rect": zombie_rect, "points": zombie_points,
                                              "zombie_pictures": zombie_images, "index": 0, "attack_index": 0,
                                              "picture_time": time.time(), "line": ((zombie_y - 20) // 100) + 1,
                                              "die_animation": False, "dead": False, "dead_animation_index": 0,
-                                             "die_time": time.time()})
+                                             "die_time": time.time(), "zombie_move": True})
+                        self.complete_rect.x -= 13
+                        self.complete_rect.width += 13
+                    self.last_zombie_spawn_time = time.time()
+                    self.zombie_spawn_index += 1
+
 
         elif self.level == 2:
             zombies_pairs = [1, 1, 2, 0, 1, 1, 1, 5]  # количество зомби в каждой волне
-            zombie_time = [10, 10, 20, 25, 30, 30, 25, 30]  # время между созданием зомби
-            zombie_types = [3, 1, 1, 2, 1, 2, 3, 2, 1, 1, 1, 2]
-            zombie_type_index = 0
-            zombie_image_index = 0
+            zombie_time = [30, 20, 45, 25, 30, 30, 25, 30]  # время между созданием зомби
+            zombie_types = [3, 3, 1, 2, 1, 2, 3, 2, 1, 1, 1, 2]
 
             if self.zombie_spawn_index < len(zombies_pairs):
                 if time.time() - self.last_zombie_spawn_time >= zombie_time[self.zombie_spawn_index]:
                     for i in range(zombies_pairs[self.zombie_spawn_index]):
-                        zombie_y = random.choice(self.ways)
-                        zombie_x = float(random.randint(890, 940))
-                        zombie_rect = pg.Rect(int(zombie_x) + 80, zombie_y, 40, 144)
 
-                        if zombie_types[zombie_image_index] == 1:
+                        if self.zombie_image_index == 1:
+                            self.zombie_y = self.zombie_y
+
+                        else:
+                            self.zombie_y = random.choice(self.ways)
+                        zombie_x = float(random.randint(890, 940))
+                        zombie_rect = pg.Rect(int(zombie_x) + 80, self.zombie_y, 40, 144)
+
+                        if zombie_types[self.zombie_image_index] == 1:
                             zombie_points = 20
                             zombie_images = self.zombies_pictures
-                            zombie_image_index += 1
-                            print(zombie_image_index)
-                        elif zombie_types[zombie_image_index] == 2:
+                            self.zombie_image_index += 1
+                        elif zombie_types[self.zombie_image_index] == 2:
                             zombie_points = 40
                             zombie_images = self.coneheaad_zombie_pictures
-                            zombie_image_index += 1
-                            print(zombie_image_index)
-                        elif zombie_types[zombie_image_index] == 3:
+                            self.zombie_image_index += 1
+                        elif zombie_types[self.zombie_image_index] == 3:
                             zombie_points = 60
                             zombie_images = self.buckethead_zombie_pictures
-                            zombie_image_index += 1
-                            print(zombie_image_index)
+                            self.zombie_image_index += 1
 
-                        self.zombies.append({"x": zombie_x, "y": zombie_y, "rect": zombie_rect, "points": zombie_points,
+                        self.zombies.append({"x": zombie_x, "y": self.zombie_y, "rect": zombie_rect, "points": zombie_points,
                                              "zombie_pictures": zombie_images, "index": 0, "attack_index": 0,
-                                             "picture_time": time.time(), "line": ((zombie_y - 20) // 100) + 1,
+                                             "picture_time": time.time(), "line": ((self.zombie_y - 20) // 100) + 1,
                                              "die_animation": False, "dead": False, "dead_animation_index": 0,
-                                             "die_time": time.time()})
+                                             "die_time": time.time(), "zombie_move": True})
 
-                        self.complete_rect.x -= 13
-                        self.complete_rect.width += 13
-                        zombie_type_index += 1
+                        self.complete_rect.x -= 12
+                        self.complete_rect.width += 12
+                    self.last_zombie_spawn_time = time.time()
+                    self.zombie_spawn_index += 1
+
+        elif self.level == 3:
+            zombies_pairs = [1, 1, 1, 1, 1, 1, 1, 5]  # количество зомби в каждой волне
+            zombie_time = [30, 45, 30, 0, 5, 35, 25, 30]  # время между созданием зомби
+            zombie_types = [1, 1, 3, 3, 3, 2, 3, 2, 1, 1, 1, 2]
+
+            if self.zombie_spawn_index < len(zombies_pairs):
+                if time.time() - self.last_zombie_spawn_time >= zombie_time[self.zombie_spawn_index]:
+                    for i in range(zombies_pairs[self.zombie_spawn_index]):
+
+                        if self.zombie_image_index == 2:
+                            self.zombie_y = 320
+
+                        elif self.zombie_image_index == 3:
+                            self.zombie_y -= 200
+
+                        elif self.zombie_image_index == 4:
+                            self.zombie_y += 100
+
+                        else:
+                            self.zombie_y = random.choice(self.ways)
+                        zombie_x = float(random.randint(890, 940))
+                        zombie_rect = pg.Rect(int(zombie_x) + 80, self.zombie_y, 40, 144)
+
+                        if zombie_types[self.zombie_image_index] == 1:
+                            zombie_points = 20
+                            zombie_images = self.zombies_pictures
+                            self.zombie_image_index += 1
+                        elif zombie_types[self.zombie_image_index] == 2:
+                            zombie_points = 40
+                            zombie_images = self.coneheaad_zombie_pictures
+                            self.zombie_image_index += 1
+                        elif zombie_types[self.zombie_image_index] == 3:
+                            zombie_points = 60
+                            zombie_images = self.buckethead_zombie_pictures
+                            self.zombie_image_index += 1
+
+                        self.zombies.append({"x": zombie_x, "y": self.zombie_y, "rect": zombie_rect, "points": zombie_points,
+                                             "zombie_pictures": zombie_images, "index": 0, "attack_index": 0,
+                                             "picture_time": time.time(), "line": ((self.zombie_y - 20) // 100) + 1,
+                                             "die_animation": False, "dead": False, "dead_animation_index": 0,
+                                             "die_time": time.time(), "zombie_move": True})
+
+                        self.complete_rect.x -= 12
+                        self.complete_rect.width += 12
                     self.last_zombie_spawn_time = time.time()
                     self.zombie_spawn_index += 1
 
@@ -114,15 +165,16 @@ class Zombies:
         for zombie in self.zombies:
             for plant in cells.plants:
                 if zombie["rect"].colliderect(plant["rect"]):
-                    self.zombies_move = False
+                    zombie["zombie_move"] = False
                     if time.time() - self.zombie_attack >= 0.3:
                         zombie["attack_index"] = (zombie["attack_index"] + 1) % len(self.zombies_attack_pictures)
                         self.zombie_attack = time.time()
                     if time.time() - self.hit_time >= 2:
                         if plant["points"] <= 0:
                             plant["active"] = False
+                            zombie["move"]= True
                         else:
-                            plant["points"] -= 10
+                            plant["points"] -= 5
                             self.hit_time = time.time()
 
     def draw_zombies(self, cells):
@@ -150,9 +202,9 @@ class Zombies:
         pg.draw.rect(self.screen, (0, 255, 0), self.complete_rect, 0, border_radius=3)
 
     def move(self):
-        if self.zombies_move:
-            if time.time() - self.zombie_move >= 1.5:
-                for zombie in self.zombies:
+        for zombie in self.zombies:
+            if zombie["zombie_move"]:
+                if time.time() - self.zombie_move >= 1.5:
                     zombie["x"] -= 0.15
                     zombie["rect"].x = int(zombie["x"]) + 80
                     if zombie["x"] <= 100:
@@ -177,5 +229,7 @@ class Zombies:
         cells.peas = [pea for pea in cells.peas if not pea["shot"]]
 
         self.zombies = [zombie for zombie in self.zombies if not zombie["dead"]]
-        if self.zombies_killed == 11:
+        if self.zombies_killed == 11 and self.level == 1:
+            self.victory = True
+        if self.zombies_killed == 11 and self.level == 2:
             self.victory = True

@@ -43,6 +43,7 @@ class Game:
         self.cells = cells.Cells(self.tmx_map, self.screen)
         self.plants = plants.Plants(self.screen)
         self.zombies = zombies.Zombies(level_num, self.screen)
+        self.zombies.zombies_killed = 0
 
     def run(self):
         running = True
@@ -59,7 +60,7 @@ class Game:
             if event.type == pg.QUIT:
                 pg.quit()
                 exit()
-            elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1 and (self.map == 'level1' or self.map == 'level2'):
+            elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1 and (self.map == 'level1' or self.map == 'level2' or self.map == 'level3'):
                 self.sun.check_click(event.pos)
                 self.cells.fill_cell(event.pos, self.plants, self.plants.plant_amount, self.sun)
                 self.plants.choose_plant(event.pos)
@@ -74,6 +75,9 @@ class Game:
 
                 elif self.levels_menu.level2_icon_rect.collidepoint(event.pos):
                     self.levels_menu.level = 2
+
+                elif self.levels_menu.level3_icon_rect.collidepoint(event.pos):
+                    self.levels_menu.level = 3
 
         if self.main_menu.action == 'start_game':
             self.map = 'levels_menu'
@@ -91,17 +95,28 @@ class Game:
             self.levels_menu.level = None
             self.plants.level = 2
 
+        elif self.levels_menu.level == 3:
+            self.map = 'level3'
+            self.init_level(3)
+            self.levels_menu.level = None
+            self.plants.level = 3
+
         if self.availible_level == '2':
             self.levels_menu.level2_availible = True
 
+        if self.availible_level == '3':
+            self.levels_menu.level2_availible = True
+            self.levels_menu.level3_availible = True
+
     def update(self):
-        if self.map == 'level1' or self.map == 'level2':
+        if self.map == 'level1' or self.map == 'level2' or self.map == 'level3':
             self.zombies.create_zombies()
             self.zombies.move()
             self.zombies.hit_plant(self.cells)
             self.sun.update_suns_amount(self.cells)
             self.zombies.pea_hit(self.cells)
             self.cells.peashooter(self.zombies)
+            self.cells.cherrybomb(self.zombies)
 
     def check_level(self):
         with open('level_progress.txt', "r") as file:
@@ -117,7 +132,7 @@ class Game:
         if self.map == 'levels_menu':
             self.levels_menu.run()
 
-        if self.map == 'level1' or self.map == 'level2':
+        if self.map == 'level1' or self.map == 'level2' or self.map == 'level3':
             for layer in self.tmx_map:
                 if isinstance(layer, pytmx.TiledTileLayer):
                     for x, y, gid in layer:
@@ -136,13 +151,22 @@ class Game:
             self.plants.draw_cards(self.sun.suns_total)
             self.zombies.draw_zombies(self.cells)
 
-            if self.zombies.victory:
+            if self.zombies.victory and self.map == 'level1':
                 self.screen.blit(pg.image.load('pictures/cards/wallnut_victory.png'),(300,0))
                 self.levels_menu.level2_availible = True
+                self.zombies.level = 2
                 with open('level_progress.txt', "w") as file:
                     file.write('2') #переписали значение в файле для сохранения прогресса
-                    self.zombies.level = 2
                     self.plants.level = 2
+                    file.close()
+
+            if self.zombies.victory and self.map == 'level2':
+                self.screen.blit(pg.image.load('pictures/cards/cherrybomb_victory.png'),(300,0))
+                self.levels_menu.level3_avaiible = True
+                self.zombies.level = 3
+                with open('level_progress.txt', "w") as file:
+                    file.write('3') #переписали значение в файле для сохранения прогресса
+                    self.plants.level = 3
                     file.close()
 
         pg.display.flip()
