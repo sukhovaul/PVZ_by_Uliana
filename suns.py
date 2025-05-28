@@ -6,7 +6,7 @@ import time
 class Sun:
     def __init__(self, screen):
         self.screen = screen
-        self.suns_total = 0
+        self.suns_total = 150
         self.suns = []
         self.last_spawn_time = time.time()
         try:

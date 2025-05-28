@@ -21,11 +21,6 @@ class Menu():
 
         self.action = None
 
-        pg.mixer.init()
-
-        pg.mixer.music.load('music/plants_vs_zombies_02 - Crazy Dave (Intro Theme).mp3')
-        pg.mixer.music.play(-1)
-
     def draw(self):
         self.screen.blit(self.image,(0,0))
 

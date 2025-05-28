@@ -13,6 +13,8 @@ class Plants():
         self.wallnut_card = pg.transform.scale(self.wallnut_card, (58, 73))
         self.cherrybomb_card = pg.image.load('pictures/cards/card_cherrybomb.png')
         self.cherrybomb_card = pg.transform.scale(self.cherrybomb_card, (58,73))
+        self.foomshroom_card = pg.image.load('pictures/cards/card_foomshroom.png')
+        self.foomshroom_card = pg.transform.scale(self.foomshroom_card, (58,73))
 
         self.gray_sunflower = pg.image.load('pictures/cards/card_sunflower-gray.png')
         self.gray_sunflower = pg.transform.scale(self.gray_sunflower, (58, 73))
@@ -22,11 +24,14 @@ class Plants():
         self.gray_wallnut = pg.transform.scale(self.gray_wallnut, (58, 73))
         self.gray_cherrybomb = pg.image.load('pictures/cards/card_cherrybomb-gray.png')
         self.gray_cherrybomb = pg.transform.scale(self.gray_cherrybomb, (58,73))
+        self.gray_foomshroom = pg.image.load('pictures/cards/card_foomshroom_gray.png')
+        self.gray_foomshroom = pg.transform.scale(self.gray_foomshroom, (58,73))
 
         self.sunflower_time = 0  # Доступны сразу
         self.wallnut_time = 0
         self.peashooter_time = 0
         self.cherrybomb_time = 0
+        self.foomshroom_time = 0
 
         self.level = None
 
@@ -34,11 +39,13 @@ class Plants():
         self.wallnut_rect = pg.Rect(192, 0, 64, 89)
         self.peashooter_rect = pg.Rect(128, 0, 64, 89)
         self.cherrybomb_rect = pg.Rect(256,0,64,89)
+        self.foomshroom_rect = pg.Rect(306, 0, 64, 89)
         self.cards = [
             {"rect": self.sunflower_rect, "amount": 50, "plant": 'sunflower', "availible": False},
             {"rect": self.wallnut_rect, "amount": 50, "plant": 'wallnut', "availible": False},
             {"rect": self.peashooter_rect, "amount": 100, "plant": 'peashooter', "availible": False},
-            {"rect": self.cherrybomb_rect, "amount": 150, "plant": "cherrybomb", "avaiible": False}
+            {"rect": self.cherrybomb_rect, "amount": 150, "plant": "cherrybomb", "availible": False},
+            {"rect": self.foomshroom_rect, "amount": 75, "plant": "foomshroom", "availible": False}
         ]
 
         self.active_plant = None
@@ -54,6 +61,9 @@ class Plants():
 
         if self.level >= 3:
             self.screen.blit(self.gray_cherrybomb, (248, 5))
+
+        if self.level >= 4:
+            self.screen.blit(self.gray_foomshroom, (306, 5))
 
         for card in self.cards:
             if card["plant"] == 'sunflower':
@@ -79,6 +89,12 @@ class Plants():
                 if card["availible"] and self.level >= 2:
                     self.screen.blit(self.cherrybomb_card, (248, 5))
 
+            elif card["plant"] == "foomshroom":
+                card["availible"] = ((suns_amount >= card["amount"] and
+                                     current_time >= self.foomshroom_time))
+                if card["availible"] and self.level >= 4:
+                    self.screen.blit(self.foomshroom_card, (306,5))
+
     def choose_plant(self, pos):
         for card in self.cards:
             if card["rect"].collidepoint(pos) and card["availible"]:
@@ -95,3 +111,5 @@ class Plants():
                 self.wallnut_time = time.time() + 5
             elif self.active_plant == 'cherrybomb':
                 self.cherrybomb_time = time.time() + 5
+            elif self.active_plant == 'foomshroom':
+                self.foomshroom_time = time.time() + 5

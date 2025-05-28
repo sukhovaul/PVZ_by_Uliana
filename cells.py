@@ -16,9 +16,14 @@ class Cells:
         self.wallnut_pictures = [pg.image.load(f'pictures/plants/wallnut/WallNut_{i}.png') for i in range(16)]
         self.peashooter_pictures = [pg.image.load(f'pictures/plants/peashooter/Peashooter_{i}.png') for i in range(13)]
         self.cherrybomb_pictures = [pg.image.load(f'pictures/plants/cherrybomb/CherryBomb_{i}.png') for i in range(7)]
+        self.foomshroom_pictures = [pg.image.load(f'pictures/plants/foomshroom/FumeShroom_{i}.png') for i in range(16)]
+
+        self.fumeshroom_attack = [pg.image.load(f'pictures/plants/foomshroom/FumeShroomAttack/FumeShroomAttack_{i}.png') for i in range(23)]
 
         self.peas = []
+        self.fumes = []
         self.pea_image = pg.image.load('pictures/plants/peashooter/PeaNormal_0.png')
+        self.fume_image = pg.image.load('pictures/plants/foomshroom/FumeShroomAttack/fume.png')
 
         for layer in self.tmx_map:
             if isinstance(layer, pytmx.TiledObjectGroup):
@@ -66,12 +71,22 @@ class Cells:
                         })
 
                     elif plant.active_plant == "cherrybomb":
-                        new_plant.update(({
+                        new_plant.update({
                             "image":self.cherrybomb_pictures,
                             "type":'cherrybomb',
                             "points":20,
                             "time": time.time()
-                        }))
+                        })
+
+                    elif plant.active_plant == "foomshroom":
+                        new_plant.update({
+                            "image":self.foomshroom_pictures,
+                            "type":'fumeshroom',
+                            "points":20,
+                            "time": time.time(),
+                            "line": ((cell["rect"].y - 60) // 100) + 1,
+                            "fume_time": time.time()
+                        })
 
                     self.plants.append(new_plant)
                     plant.plant_placed()
@@ -81,6 +96,10 @@ class Cells:
         if time.time() - self.plant_time >= 0.07:
             for plant in self.plants:
                 plant["index"] = (plant["index"] + 1) % len(plant["image"])
+                if not plant["active"]:
+                    for cell in self.cells:
+                        if cell["rect"]==plant["rect"]:
+                            cell["empty"] = True
             self.plant_time = time.time()
 
         for plant in self.plants:
@@ -91,6 +110,9 @@ class Cells:
         for pea in self.peas:
             pea["rect"].x += 5
             self.screen.blit(self.pea_image, (pea["rect"].x, pea["rect"].y))
+        for fume in self.fumes:
+            fume["rect"].x += 5
+            self.screen.blit(self.fume_image, (fume["rect"].x, fume["rect"].y))
 
     def peashooter(self, zombies):
         for plant in self.plants:
@@ -102,6 +124,17 @@ class Cells:
                             self.peas.append({"rect": pea_rect, "shot": False})
                             plant["last_shot"] = time.time()
                         break
+
+    def FumeShroom(self, zombies):
+        for plant in self.plants:
+            if plant["type"] =='fumeshroom':
+                for zombie in zombies.zombies:
+                    if zombie["line"] == plant["line"] and zombie["rect"].x - plant["rect"].x <= 295:
+                        plant["image"] = self.fumeshroom_attack
+                        if time.time() - plant["fume_time"] >= 0.7:
+                            fume_rect = pg.Rect(plant["rect"].x+90, plant["rect"].y+35, 15, 15)
+                            self.fumes.append({"rect": fume_rect, "shot": False})
+                            plant["fume_time"] = time.time()
 
 
     def cherrybomb(self, zombies):

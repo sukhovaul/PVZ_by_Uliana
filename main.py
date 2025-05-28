@@ -25,10 +25,25 @@ class Game:
 
         self.clock = pg.time.Clock()
 
+        self.sound_on = True
+        self.sound_on_image = pg.image.load('music/volume_on.png')
+        self.sound_on_image = pg.transform.scale(self.sound_on_image,(50,50))
+        self.sound_off_image = pg.image.load('music/volume_off.png')
+        self.sound_off_image = pg.transform.scale(self.sound_off_image,(50,50))
+        self.sound_rect = pg.Rect(1350, 550, 50, 50)
+
+        pg.mixer.music.load('music/plants_vs_zombies_02 - Crazy Dave (Intro Theme).mp3')
+        pg.mixer.music.play(-1)
+
+        self.background4 = pg.image.load('maps/Background_1.png')
+
         self.suns_count = pg.image.load('pictures/suns_count.png')
         self.suns_count_rect = pg.Surface((54, 21))
         self.suns_count_rect.fill((227, 203, 170))
         self.amount_font = pg.font.Font('fonts/main_font.ttf', 20)
+
+        self.fumeshroom_victory = pg.image.load('pictures/cards/fume_shroom_victory.png')
+        self.fumeshroom_victory = pg.transform.scale(self.fumeshroom_victory, (798,597))
 
         self.rect_wallnut_victory = pg.Rect(595, 515 , 185, 35)
 
@@ -60,10 +75,17 @@ class Game:
             if event.type == pg.QUIT:
                 pg.quit()
                 exit()
-            elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1 and (self.map == 'level1' or self.map == 'level2' or self.map == 'level3'):
+            elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1 and (self.map == 'level1' or self.map == 'level2' or self.map == 'level3' or self.map == 'level4'):
                 self.sun.check_click(event.pos)
                 self.cells.fill_cell(event.pos, self.plants, self.plants.plant_amount, self.sun)
                 self.plants.choose_plant(event.pos)
+
+                if self.sound_rect.collidepoint(event.pos):
+                    if self.sound_on:
+                        pg.mixer.music.pause()
+                    else:
+                        pg.mixer.music.unpause()
+                    self.sound_on = not self.sound_on
 
                 if self.zombies.victory:
                     if self.rect_wallnut_victory.collidepoint(event.pos):
@@ -78,6 +100,16 @@ class Game:
 
                 elif self.levels_menu.level3_icon_rect.collidepoint(event.pos):
                     self.levels_menu.level = 3
+
+                elif self.levels_menu.level4_icon_rect.collidepoint(event.pos):
+                    self.levels_menu.level = 4
+
+                if self.sound_rect.collidepoint(event.pos):
+                    if self.sound_on:
+                        pg.mixer.music.pause()
+                    else:
+                        pg.mixer.music.unpause()
+                    self.sound_on = not self.sound_on
 
         if self.main_menu.action == 'start_game':
             self.map = 'levels_menu'
@@ -101,6 +133,12 @@ class Game:
             self.levels_menu.level = None
             self.plants.level = 3
 
+        elif self.levels_menu.level == 4:
+            self.map = 'level4'
+            self.init_level(4)
+            self.levels_menu.level = None
+            self.plants.level = 4
+
         if self.availible_level == '2':
             self.levels_menu.level2_availible = True
 
@@ -108,8 +146,13 @@ class Game:
             self.levels_menu.level2_availible = True
             self.levels_menu.level3_availible = True
 
+        if self.availible_level == '4':
+            self.levels_menu.level2_availible = True
+            self.levels_menu.level3_availible = True
+            self.levels_menu.level4_availible = True
+
     def update(self):
-        if self.map == 'level1' or self.map == 'level2' or self.map == 'level3':
+        if self.map == 'level1' or self.map == 'level2' or self.map == 'level3' or self.map == 'level4':
             self.zombies.create_zombies()
             self.zombies.move()
             self.zombies.hit_plant(self.cells)
@@ -117,6 +160,8 @@ class Game:
             self.zombies.pea_hit(self.cells)
             self.cells.peashooter(self.zombies)
             self.cells.cherrybomb(self.zombies)
+            self.cells.FumeShroom(self.zombies)
+            self.zombies.fume_hit(self.cells)
 
     def check_level(self):
         with open('level_progress.txt', "r") as file:
@@ -132,7 +177,7 @@ class Game:
         if self.map == 'levels_menu':
             self.levels_menu.run()
 
-        if self.map == 'level1' or self.map == 'level2' or self.map == 'level3':
+        if self.map == 'level1' or self.map == 'level2' or self.map == 'level3' or self.map == 'level4':
             for layer in self.tmx_map:
                 if isinstance(layer, pytmx.TiledTileLayer):
                     for x, y, gid in layer:
@@ -140,6 +185,10 @@ class Game:
 
                         if tile:
                             self.screen.blit(tile, (x * self.tmx_map.tilewidth, y * self.tmx_map.tileheight))
+
+            if self.map == 'level4' or self.map == 'level3':
+                self.screen.blit(self.background4, (0, 0))
+
             self.cells.draw_plants()
 
             self.sun.draw()
@@ -168,6 +217,20 @@ class Game:
                     file.write('3') #переписали значение в файле для сохранения прогресса
                     self.plants.level = 3
                     file.close()
+
+            if self.zombies.victory and self.map == 'level3':
+                self.screen.blit(self.fumeshroom_victory, (300,0))
+                self.levels_menu.level4_avaiible = True
+                self.zombies.level = 4
+                with open('level_progress.txt', "w") as file:
+                    file.write('4') #переписали значение в файле для сохранения прогресса
+                    self.plants.level = 4
+                    file.close()
+
+        if self.sound_on:
+            self.screen.blit(self.sound_on_image, (1350,550))
+        else:
+            self.screen.blit(self.sound_off_image, (1350, 550))
 
         pg.display.flip()
 
