@@ -135,6 +135,8 @@ class Cells:
                             fume_rect = pg.Rect(plant["rect"].x+90, plant["rect"].y+35, 15, 15)
                             self.fumes.append({"rect": fume_rect, "shot": False})
                             plant["fume_time"] = time.time()
+                    else:
+                        plant["image"] = self.foomshroom_pictures
 
 
     def cherrybomb(self, zombies):

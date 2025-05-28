@@ -194,6 +194,7 @@ class Zombies:
                                      "picture_time": time.time(), "line": ((320 - 20) // 100) + 1,
                                      "die_animation": False, "dead": False, "dead_animation_index": 0,
                                      "die_time": time.time(), "zombie_move": False})
+                self.zombies_killed = 0
 
     def hit_plant(self, cells):
         for zombie in self.zombies:
