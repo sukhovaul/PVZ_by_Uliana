@@ -26,8 +26,16 @@ class Level_menu:
         self.level3_availible = False
         self.level4_availible = False
 
+        self.menu_button_rect = pg.Rect(0,0,100,50)
+        self.font_button = pg.font.Font('fonts/main_font.ttf', 30)
+
     def draw(self):
         self.screen.blit(self.level_menu_image, (0,0))
+
+        pg.draw.rect(self.screen, (70,70,70), self.menu_button_rect, 0, 5)
+
+        back_btn = self.font_button.render("Назад", True,(255,255,255))
+        self.screen.blit(back_btn, (10,10))
 
         self.screen.blit(self.level1_icon, (100, 100))
         self.screen.blit(self.level2_blocked_icon, (350, 100))

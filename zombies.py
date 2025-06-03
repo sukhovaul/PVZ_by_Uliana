@@ -11,7 +11,7 @@ class Zombies:
         self.ways = [20, 120, 220, 320, 420]
 
         self.victory_text = None
-        self.victory_time = 0
+        self.victory_time = None
 
         self.zombies_killed = 0
 
@@ -172,7 +172,7 @@ class Zombies:
 
         elif self.level == 4:
             zombies_pairs = [1, 1, 2, 2, 2, 2]  # количество зомби в каждой волне
-            zombie_time = [30, 30, 30, 30, 30, 40]  # время между созданием зомби
+            zombie_time = [0, 30, 30, 30, 30, 40]  # время между созданием зомби
             zombie_types = [1, 1, 2, 1, 3, 1, 2, 3, 2, 3]
 
             if self.zombie_spawn_index < len(zombies_pairs):
@@ -205,7 +205,7 @@ class Zombies:
                     self.last_zombie_spawn_time = time.time()
                     self.zombie_spawn_index += 1
 
-            if self.zombies_killed == 10:
+            if self.zombies_killed == 1:
                 if not self.show_zomboss_text:
                     self.zomboss_text = self.font.render("ZOMBOSS IS COMING!", True, (255, 0, 0))
                     self.zomboss_text_time = time.time()
@@ -215,7 +215,7 @@ class Zombies:
                     self.show_line = True
 
                     zombie_rect = pg.Rect(940, 120, 290,290)
-                    self.zombies.append({"x": 940, "y": 120, "rect": zombie_rect, "points": 800,
+                    self.zombies.append({"x": 940, "y": 120, "rect": zombie_rect, "points": 10,
                                          "zombie_pictures": self.zomboss_pictures, "index": 0, "zombie_time": time.time() - 25, "grav_time": time.time()-10,
                                          "picture_time": time.time(), "line": [((320 - 20) // 100) + 1, ((220 - 20) // 100) + 1, ((120 - 20) // 100) + 1],
                                          "die_time": time.time(), "zombie_move": False, "zomboss": True, "dead": False, "die_animation": False, "zombie_amount": 3,
@@ -327,6 +327,9 @@ class Zombies:
             self.victory = True
         if self.zombies_killed == 12 and self.level == 3:
             self.victory = True
+        if  self.level == 4 and self.victory_time != None:
+            if time.time() - self.victory_time >= 5:
+                self.victory = True
 
     def fume_hit(self, cells):
         for fume in cells.fumes:

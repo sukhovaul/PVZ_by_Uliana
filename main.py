@@ -104,6 +104,9 @@ class Game:
                 elif self.levels_menu.level4_icon_rect.collidepoint(event.pos):
                     self.levels_menu.level = 4
 
+                elif self.levels_menu.menu_button_rect.collidepoint(event.pos):
+                    self.map = 'main_menu'
+
                 if self.sound_rect.collidepoint(event.pos):
                     if self.sound_on:
                         pg.mixer.music.pause()
@@ -227,6 +230,9 @@ class Game:
                     file.write('4') #переписали значение в файле для сохранения прогресса
                     self.plants.level = 4
                     file.close()
+
+            if self.zombies.victory and self.map == 'level4':
+                self.map = 'levels_menu'
 
         if self.sound_on:
             self.screen.blit(self.sound_on_image, (1350,550))
