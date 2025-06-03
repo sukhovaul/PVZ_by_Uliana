@@ -3,8 +3,10 @@ import time
 
 
 class Plants():
-    def __init__(self, screen):
+    def __init__(self, screen, cells):
         self.screen = screen
+        self.cells = cells
+
         self.sunflower_card = pg.image.load('pictures/cards/card_sunflower.png')
         self.sunflower_card = pg.transform.scale(self.sunflower_card, (58, 73))
         self.peashooter_card = pg.image.load('pictures/cards/card_peashooter.png')
@@ -91,7 +93,7 @@ class Plants():
 
             elif card["plant"] == "foomshroom":
                 card["availible"] = ((suns_amount >= card["amount"] and
-                                     current_time >= self.foomshroom_time))
+                                     current_time >= self.foomshroom_time and self.cells.current_fumeshrooms < self.cells.max_fumeshrooms))
                 if card["availible"] and self.level >= 4:
                     self.screen.blit(self.foomshroom_card, (306,5))
 

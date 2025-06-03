@@ -10,6 +10,9 @@ class Cells:
         self.screen = screen
         self.plants = []
 
+        self.max_fumeshrooms = 5
+        self.current_fumeshrooms = 0
+
         self.plant_time = time.time()
 
         self.sunflower_pictures = [pg.image.load(f'pictures/plants/sunflower/SunFlower_{i}.png') for i in range(18)]
@@ -87,6 +90,7 @@ class Cells:
                             "line": ((cell["rect"].y - 60) // 100) + 1,
                             "fume_time": time.time()
                         })
+                        self.current_fumeshrooms += 1
 
                     self.plants.append(new_plant)
                     plant.plant_placed()
@@ -98,8 +102,10 @@ class Cells:
                 plant["index"] = (plant["index"] + 1) % len(plant["image"])
                 if not plant["active"]:
                     for cell in self.cells:
-                        if cell["rect"]==plant["rect"]:
+                        if cell["rect"] == plant["rect"]:
                             cell["empty"] = True
+                    if plant["type"] == 'fumeshroom':
+                        self.current_fumeshrooms -= 1
             self.plant_time = time.time()
 
         for plant in self.plants:
@@ -118,7 +124,14 @@ class Cells:
         for plant in self.plants:
             if plant["type"] == 'peashooter':
                 for zombie in zombies.zombies:
-                    if zombie["line"] == plant["line"]:
+                    for l in zombie["line"]:
+                        if l == plant["line"]:
+                            if time.time() - plant["last_shot"] >= 1.4:
+                                pea_rect = pg.Rect(plant["rect"].x, plant["rect"].y, 23, 23)
+                                self.peas.append({"rect": pea_rect, "shot": False})
+                                plant["last_shot"] = time.time()
+                for grav in zombies.grave:
+                    if grav["line"] == plant["line"] and plant["x"]<grav["x"]:
                         if time.time() - plant["last_shot"] >= 1.4:
                             pea_rect = pg.Rect(plant["rect"].x, plant["rect"].y, 23, 23)
                             self.peas.append({"rect": pea_rect, "shot": False})
@@ -129,14 +142,22 @@ class Cells:
         for plant in self.plants:
             if plant["type"] =='fumeshroom':
                 for zombie in zombies.zombies:
-                    if zombie["line"] == plant["line"] and zombie["rect"].x - plant["rect"].x <= 295:
+                    for l in zombie["line"]:
+                        if l == plant["line"] and zombie["rect"].x - plant["rect"].x <= 295:
+                            plant["image"] = self.fumeshroom_attack
+                            if time.time() - plant["fume_time"] >= 0.7:
+                                fume_rect = pg.Rect(plant["rect"].x+90, plant["rect"].y+35, 15, 15)
+                                self.fumes.append({"rect": fume_rect, "shot": False})
+                                plant["fume_time"] = time.time()
+                                plant["index"] = 0
+                for grav in zombies.grave:
+                    if grav["line"] == plant["line"] and grav["rect"].x - plant["rect"].x <= 295:
                         plant["image"] = self.fumeshroom_attack
                         if time.time() - plant["fume_time"] >= 0.7:
                             fume_rect = pg.Rect(plant["rect"].x+90, plant["rect"].y+35, 15, 15)
                             self.fumes.append({"rect": fume_rect, "shot": False})
                             plant["fume_time"] = time.time()
-                    else:
-                        plant["image"] = self.foomshroom_pictures
+                            plant["index"] = 0
 
 
     def cherrybomb(self, zombies):
@@ -148,4 +169,7 @@ class Cells:
                             zombie["points"] = 0
                             zombie["die_animation"] = True
                             zombie["zombie_pictures"] = None
+                    for grav in zombies.grave:
+                        if abs(plant["rect"].x - grav["x"]) <= 100 and abs(plant["rect"].y - grav["y"]) <= 120:
+                            grav["points"] = 0
                     plant["active"] = False

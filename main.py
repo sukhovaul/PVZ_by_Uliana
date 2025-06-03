@@ -56,7 +56,7 @@ class Game:
         self.tmx_map = pytmx.load_pygame(f'maps/level1.tmx')
         self.sun = suns.Sun(self.screen)
         self.cells = cells.Cells(self.tmx_map, self.screen)
-        self.plants = plants.Plants(self.screen)
+        self.plants = plants.Plants(self.screen, self.cells)
         self.zombies = zombies.Zombies(level_num, self.screen)
         self.zombies.zombies_killed = 0
 
@@ -162,6 +162,7 @@ class Game:
             self.cells.cherrybomb(self.zombies)
             self.cells.FumeShroom(self.zombies)
             self.zombies.fume_hit(self.cells)
+            self.zombies.zomboss(self.cells)
 
     def check_level(self):
         with open('level_progress.txt', "r") as file:
